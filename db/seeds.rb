@@ -12,13 +12,30 @@ puts "Cleaning database"
 Bookmark.destroy_all
 Movie.destroy_all
 
-
 puts "Creating data"
-10.times do
-  Movie.create(title: Faker::Movie.title,
-                overview: Faker::Lorem.paragraph,
-                poster_url: "https://media.istockphoto.com/id/1494642262/fr/photo/les-gens-dans-lauditorium-de-cin%C3%A9ma-avec-%C3%A9cran-blanc-vide.jpg?s=612x612&w=0&k=20&c=Z_NZBlVFSMncfFhN2w7BkwaDuAfiQUUdecZ__M7hlbM=",
-                rating: rand(0.0..10.0).round(1))
+require 'uri'
+require "json"
+
+require 'net/http'
+
+url = URI("https://tmdb.lewagon.com/movie/top_rated")
+
+http = Net::HTTP.new(url.host, url.port)
+http.use_ssl = true
+
+request = Net::HTTP::Get.new(url)
+request["accept"] = 'application/json'
+
+response = http.request(request)
+test = response.read_body
+file = JSON.parse(test)
+movies = file["results"].first(50)
+
+poster_url = "https://image.tmdb.org/t/p/w500"
+
+movies.each do |movie|
+  Movie.create(title: movie["title"], overview: movie["overview"], poster_url: "#{poster_url}#{movie["poster_path"]}", rating: movie["vote_average"])
 end
 
 puts "Movies created!"
+puts Movie.all
