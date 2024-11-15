@@ -1,14 +1,39 @@
 <div class="container mt-4">
-  <h1 class="text-center mb-4">Lists#index</h1>
+  <h1 class="text-center mb-4">Mes listes</h1>
 
-<ul class="list-group">
+  <div class="cards">
+
+
+
+
+
   <% @lists.each do |list| %>
-  <li class="list-group-item d-flex justify-content-between align-items-center">
-    <%=link_to list.name, list_path(list)%>
-    <i class="fa-solid fa-arrow-right text-secondary"></i>
-  </li>
+
+
+
+
+
+
+
+    <%= link_to list_path(list) do %>
+      <div class="card-product">
+        <%= image_tag "#{list.name}.jpg" %>
+        <div class="card-product-infos">
+          <h2><%= list.name %></h2>
+          <p><%= list.movies.length %> films </p>
+        </div>
+     </div>
+    <% end %>
+
+
+
+
+
+
+
   <% end %>
-</ul>
+
+  </div>
   <div class="mt-4 text-center">
   <%=link_to "Create a new list", lists_new_path, class: "btn btn-primary"%>
   </div>
